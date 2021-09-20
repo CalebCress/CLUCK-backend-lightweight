@@ -1,10 +1,11 @@
 function sleep(milis) { return new Promise(res => setTimeout(res, milis)) }
 
 import express from 'express'
-import bodyParser from 'body-parser'
+import cors from 'cors'
 import fs from 'fs'
 
 const app = express()
+app.use(cors())
 const port = 4000
 
 let loggedIn = {}
