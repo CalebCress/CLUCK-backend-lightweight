@@ -1,4 +1,4 @@
-# cluck-backend-lightweight
+# CLUCK-backend-lightweight
 Node Javascript CLUCK Backend API that updates the spreadsheet lab hours formula
 
 ## Intro
