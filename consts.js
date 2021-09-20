@@ -1,7 +1,4 @@
-export const bot_port = 9191;
-export const slash_port = 9190;
-export const json_data_path = 'data.json'
-export const json_hours_record_path = "hours.json" 
+export const server_port = 4000
 export const hours_column = 4
 export const lab_hours_column = 3
 export const total_hours_column = 5

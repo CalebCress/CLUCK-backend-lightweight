@@ -6,7 +6,7 @@ import fs from 'fs'
 
 const app = express()
 app.use(cors())
-const port = 4000
+import {server_port} from './consts.js'
 
 let loggedIn = {}
 if (fs.existsSync('loggedin.json')) { loggedIn = JSON.parse(fs.readFileSync('loggedin.json')) }
@@ -71,7 +71,7 @@ app.get('/loggedin', (req, res) => {
 })
 
 // Start server
-app.listen(port, (err) => { console.log('listening: ' + port + ' | err: ' + err) });
+app.listen(server_port, (err) => { console.log('listening: ' + server_port + ' | err: ' + err) });
 
 
 /// Periodically save
