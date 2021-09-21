@@ -14,6 +14,7 @@ if (fs.existsSync('loggedin.json')) { loggedIn = JSON.parse(fs.readFileSync('log
 //// INIT SPREADSHEET
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { max_row, name_column, lab_hours_column, hours_sheet_id } from './consts.js'
+import { isNativeError } from 'util/types'
 const google_client_secret = JSON.parse(fs.readFileSync('./client_secret.json'))
 const doc = await new GoogleSpreadsheet(hours_sheet_id)
 await doc.useServiceAccountAuth(google_client_secret)
@@ -42,6 +43,7 @@ async function addLabHours(name, hours) {
     }
 }
 
+
 app.get('/clock/', (req, res) => {
     // Get and check args
     let name = req.query.name
@@ -49,8 +51,9 @@ app.get('/clock/', (req, res) => {
     console.log(loggingin)
     if (!name || !loggingin) { res.status(400).send('Must include name string and loggingin boolean in URL query').end(); return; }
 
-    if (loggingin==='true') {
+    if (loggingin) {
         // Log In
+        logMember(name)
         if (!loggedIn[name]) { loggedIn[name] = Date.now() }
         res.end()
     } else {
@@ -62,6 +65,7 @@ app.get('/clock/', (req, res) => {
         } else { res.end() }
     }
 })
+
 app.get('/void', (req, res) => {
     res.end()
 })
@@ -71,10 +75,20 @@ app.get('/loggedin', (req, res) => {
 })
 
 // Start server
-app.listen(server_port, (err) => { console.log('listening: ' + server_port + ' | err: ' + err) });
+app.listen(server_port, (err) => { console.log(`listening: ${server_port} | err: ${err !== undefined ? err : "none"}`) });
 
+function logMember(name) {
+    let logged = fs.readFileSync("members.log")
+    let date = new Date()
+    let toLog = `${name}:${date.getMonth() +1}/${date.getDate()}`
+    if (logged.indexOf(toLog) === -1) {
+        logged += '\n'
+        logged += toLog
+    }
+    fs.writeFileSync('members.log', logged)
+}
 
-/// Periodically save
+// Periodically save
 (async () => {
     while (true) {
         await sleep(5000)
