@@ -124,3 +124,5 @@ function start() {
         }
     }
 }
+
+start()
