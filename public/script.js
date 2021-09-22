@@ -95,4 +95,32 @@ function render() {
     })
 }
 
-render()
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function start() {
+    render()
+    while (true) {
+        // Get data and update buttons
+        // Query data to map of { Name:TimeCluckedIn } 
+        try {
+            let membersIn = await cluckedIn()
+            // Update buttons
+            let buttons = document.getElementsByTagName('person-button')
+            for (let i = 0; i < buttons.length; i++) {
+                let button = buttons[i]
+                button.loggedIn = button.fullname in membersIn
+                buttonStates[button.loggedIn].forEach(styleSpec => {
+                    button.style.setProperty(styleSpec.styleName, styleSpec.val)
+    
+                })
+            }
+        } catch (err) { console.log(err) }
+        await sleep(5000)
+        while (buttonJustPressed) {
+            buttonJustPressed = false;
+            await sleep(2000);
+        }
+    }
+}
