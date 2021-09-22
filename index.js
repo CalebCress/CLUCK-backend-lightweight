@@ -51,12 +51,13 @@ app.get('/clock/', (req, res) => {
 
     if (loggingin) {
         // Log In
-        logMember(name)
+        logMember(name, true)
         if (!loggedIn[name]) { loggedIn[name] = Date.now() }
         res.end()
     } else {
         // Log Out
         if (loggedIn[name]) { // Test to make sure person is logged in
+            logMember(name, false)
             res.end()
             addLabHours(name, (Date.now() - loggedIn[name]) / 3600000)
             delete loggedIn[name]
@@ -75,15 +76,17 @@ app.get('/loggedin', (req, res) => {
 // Start server
 app.listen(server_port, (err) => { console.log(`listening: ${server_port} | err: ${err !== undefined ? err : "none"}`) });
 
-function logMember(name) {
-    let logged = fs.readFileSync("members.log")
+function logMember(name, loggedIn) {
+    let logged = JSON.parse(fs.readFileSync("members.log.json"))
+    logged.logTotal += 1
     let date = new Date()
-    let toLog = `${name}:${date.getMonth() +1}/${date.getDate()}`
-    if (logged.indexOf(toLog) === -1) {
-        logged += '\n'
-        logged += toLog
+    let time = date.getTime()
+    logged[logged.logTotal] = {
+        member: name,
+        loggedIn: loggedIn,
+        time: Date.now()
     }
-    fs.writeFileSync('members.log', logged)
+    fs.writeFileSync('members.log.json', JSON.stringify(logged))
 }
 
 // Periodically save
