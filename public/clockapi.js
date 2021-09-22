@@ -1,5 +1,5 @@
 // const api_server = 'https://team1540.catlin.edu:4000'
-const api_server = 'http://localhost:4000'
+const api_server = 'http://192.168.7.243:4000'
 
 clockapi = {
     clock: async (name, clockingIn) => {

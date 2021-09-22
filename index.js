@@ -6,15 +6,13 @@ import fs from 'fs'
 
 const app = express()
 app.use(cors())
-import {server_port} from './consts.js'
-
+const server_port = 4000
 let loggedIn = {}
 if (fs.existsSync('loggedin.json')) { loggedIn = JSON.parse(fs.readFileSync('loggedin.json')) }
 
 //// INIT SPREADSHEET
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { max_row, name_column, lab_hours_column, hours_sheet_id } from './consts.js'
-import { isNativeError } from 'util/types'
 const google_client_secret = JSON.parse(fs.readFileSync('./client_secret.json'))
 const doc = await new GoogleSpreadsheet(hours_sheet_id)
 await doc.useServiceAccountAuth(google_client_secret)
