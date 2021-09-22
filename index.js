@@ -33,27 +33,30 @@ async function addLabHours(name, hours) {
                     preformula = `=0`
                 }
             }
-            hours_cell.formula = `${preformula}+${parseFloat(hours).toFixed(1)}`
-            hours_cell.save()
+            if (hours != 0) {
+                hours_cell.formula = `${preformula}+${parseFloat(hours).toFixed(1)}`
+                hours_cell.save()
+            }
             return
         }
 
     }
 }
 
-
 app.get('/clock/', (req, res) => {
     // Get and check args
     let name = req.query.name
     let loggingin = req.query.loggingin
-    console.log(loggingin)
     if (!name || !loggingin) { res.status(400).send('Must include name string and loggingin boolean in URL query').end(); return; }
-
-    if (loggingin) {
+    if (loggingin === "true") {
         // Log In
         logMember(name, true)
         if (!loggedIn[name]) { loggedIn[name] = Date.now() }
         res.end()
+        try {
+            fs.writeFileSync('loggedin.json', JSON.stringify(loggedIn))
+        } catch (error) { console.log(error) }
+        console.log(`${name} clocked in`)
     } else {
         // Log Out
         if (loggedIn[name]) { // Test to make sure person is logged in
@@ -61,6 +64,10 @@ app.get('/clock/', (req, res) => {
             res.end()
             addLabHours(name, (Date.now() - loggedIn[name]) / 3600000)
             delete loggedIn[name]
+            try {
+                fs.writeFileSync('loggedin.json', JSON.stringify(loggedIn))
+            } catch (error) { console.log(error) }
+            console.log(`${name} clocked out`)
         } else { res.end() }
     }
 })
